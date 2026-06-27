@@ -40,52 +40,62 @@ function initializeSupabaseClient() {
 // 2. CONFIGURATION UI LOGIC
 // ==========================================================================
 document.addEventListener('DOMContentLoaded', () => {
-    const btnToggleSettings = document.getElementById('btn-toggle-settings');
-    const settingsOverlay = document.getElementById('settings-overlay');
-    const btnCloseSettings = document.getElementById('btn-close-settings');
-    const btnSaveSettings = document.getElementById('btn-save-settings');
-    const inputSupabaseUrl = document.getElementById('input-supabase-url');
-    const inputSupabaseKey = document.getElementById('input-supabase-key');
-    
-    // Load inputs from current state
-    if (SUPABASE_URL) inputSupabaseUrl.value = SUPABASE_URL;
-    if (SUPABASE_KEY) inputSupabaseKey.value = SUPABASE_KEY;
-
-    // Toggle overlay
-    btnToggleSettings.addEventListener('click', () => {
-        settingsOverlay.classList.remove('hidden');
-    });
-
-    btnCloseSettings.addEventListener('click', () => {
-        settingsOverlay.classList.add('hidden');
-    });
-
-    btnSaveSettings.addEventListener('click', () => {
-        const url = inputSupabaseUrl.value.trim();
-        const key = inputSupabaseKey.value.trim();
-
-        if (!url || !key) {
-            alert("Proszę podać zarówno URL, jak i Anon Key!");
-            return;
-        }
-
-        localStorage.setItem('supabase_url', url);
-        localStorage.setItem('supabase_key', key);
+    try {
+        const btnToggleSettings = document.getElementById('btn-toggle-settings');
+        const settingsOverlay = document.getElementById('settings-overlay');
+        const btnCloseSettings = document.getElementById('btn-close-settings');
+        const btnSaveSettings = document.getElementById('btn-save-settings');
+        const inputSupabaseUrl = document.getElementById('input-supabase-url');
+        const inputSupabaseKey = document.getElementById('input-supabase-key');
         
-        SUPABASE_URL = url;
-        SUPABASE_KEY = key;
+        // Load inputs from current state
+        if (inputSupabaseUrl && SUPABASE_URL) inputSupabaseUrl.value = SUPABASE_URL;
+        if (inputSupabaseKey && SUPABASE_KEY) inputSupabaseKey.value = SUPABASE_KEY;
 
-        if (initializeSupabaseClient()) {
-            settingsOverlay.classList.add('hidden');
-            if (window.showLobbyToast) {
-                window.showLobbyToast("Zapisano ustawienia Supabase! Zrestartowano połączenie.");
-            } else {
-                alert("Zapisano ustawienia Supabase!");
-            }
-        } else {
-            alert("Błąd połączenia. Sprawdź poprawność URL i Klucza.");
+        // Toggle overlay
+        if (btnToggleSettings && settingsOverlay) {
+            btnToggleSettings.addEventListener('click', () => {
+                settingsOverlay.classList.remove('hidden');
+            });
         }
-    });
+
+        if (btnCloseSettings && settingsOverlay) {
+            btnCloseSettings.addEventListener('click', () => {
+                settingsOverlay.classList.add('hidden');
+            });
+        }
+
+        if (btnSaveSettings && inputSupabaseUrl && inputSupabaseKey && settingsOverlay) {
+            btnSaveSettings.addEventListener('click', () => {
+                const url = inputSupabaseUrl.value.trim();
+                const key = inputSupabaseKey.value.trim();
+
+                if (!url || !key) {
+                    alert("Proszę podać zarówno URL, jak i Anon Key!");
+                    return;
+                }
+
+                localStorage.setItem('supabase_url', url);
+                localStorage.setItem('supabase_key', key);
+                
+                SUPABASE_URL = url;
+                SUPABASE_KEY = key;
+
+                if (initializeSupabaseClient()) {
+                    settingsOverlay.classList.add('hidden');
+                    if (window.showLobbyToast) {
+                        window.showLobbyToast("Zapisano ustawienia Supabase! Zrestartowano połączenie.");
+                    } else {
+                        alert("Zapisano ustawienia Supabase!");
+                    }
+                } else {
+                    alert("Błąd połączenia. Sprawdź poprawność URL i Klucza.");
+                }
+            });
+        }
+    } catch (err) {
+        console.error("Error initializing Supabase UI settings event listeners:", err);
+    }
 });
 
 // ==========================================================================

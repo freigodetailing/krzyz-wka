@@ -4,23 +4,41 @@
     <meta charset="UTF-8">
     <!-- strict viewport to prevent zoom and scaling, giving a native app feel -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Krzyżówki Master Multiplayer</title>
+    <title>Krzyżówki Master</title>
     
     <!-- Google Fonts: Outfit (modern, geometric, clean typography) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
     
     <!-- Stylesheets -->
     <link rel="stylesheet" href="style.css">
     
     <!-- PWA Manifest -->
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#1e112a">
+    <meta name="theme-color" content="#f0f6fc">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
 </head>
 <body>
+    <script>
+      window.onerror = function (message, source, lineno, colno, error) {
+        const div = document.createElement('div');
+        div.style.position = 'fixed';
+        div.style.top = '0';
+        div.style.left = '0';
+        div.style.width = '100%';
+        div.style.background = 'red';
+        div.style.color = 'white';
+        div.style.padding = '10px';
+        div.style.zIndex = '999999';
+        div.style.fontSize = '12px';
+        div.style.wordBreak = 'break-all';
+        div.innerHTML = '<strong>Błąd JS:</strong> ' + message + '<br>Plik: ' + source + '<br>Linia: ' + lineno + ':' + colno;
+        document.body.appendChild(div);
+        return false;
+      };
+    </script>
     <!-- App Container -->
     <div id="app">
         
@@ -32,59 +50,97 @@
             </button>
 
             <div class="lobby-content">
+                
                 <!-- Logo & Brand Header -->
                 <div class="logo-area">
-                    <div class="logo-badge">
-                        <span class="logo-letter logo-letter-1">K</span>
-                        <span class="logo-letter logo-letter-2">R</span>
-                        <span class="logo-letter logo-letter-3">Z</span>
-                    </div>
                     <h1>Krzyżówki <span class="accent-text">Master</span></h1>
-                    <p class="subtitle">Wieloosobowe starcie w czasie rzeczywistym</p>
                 </div>
                 
-                <!-- Main Actions Panel -->
-                <div class="glass-card actions-panel">
-                    <!-- Create Game Area -->
-                    <div class="action-section">
-                        <h2>Nowa Gra</h2>
-                        <p class="section-desc">Utwórz pokój i zaproś drugiego gracza do pojedynku</p>
-                        <button id="btn-create-room" class="btn btn-primary ripple">
-                            <span class="btn-text">Stwórz Pokój</span>
-                            <span class="btn-icon">🎮</span>
-                        </button>
-                    </div>
-                    
-                    <div class="divider">
-                        <span>lub</span>
-                    </div>
-                    
-                    <!-- Join Game Area -->
-                    <div class="action-section">
-                        <h2>Dołącz do Gry</h2>
-                        <p class="section-desc">Wpisz kod pokoju otrzymany od rywala</p>
-                        
-                        <div class="code-input-wrapper">
-                            <input type="text" id="input-room-code" maxlength="6" placeholder="KOD..." autocomplete="off" spellcheck="false">
+                <!-- TAB 1: HOME VIEW -->
+                <div id="lobby-home-view" class="tab-view active">
+                    <!-- Main Actions Panel -->
+                    <div class="glass-card actions-panel">
+                        <!-- Create Game Area -->
+                        <div class="action-section">
+                            <h2>Tryb gry</h2>
+                            <p class="section-desc">Graj samodzielnie lub stwórz pokój online</p>
+                            <button id="btn-play-solo" class="btn btn-primary pill-btn ripple">
+                                <span class="btn-text">Graj Solo</span>
+                            </button>
+                            <button id="btn-create-room" class="btn btn-secondary pill-btn ripple" style="margin-top: 10px;">
+                                <span class="btn-text">Nowa gra (Online)</span>
+                            </button>
+                            <p class="btn-subtitle">Łamigłówka 1</p>
                         </div>
                         
-                        <button id="btn-join-room" class="btn btn-secondary ripple">
-                            <span class="btn-text">Dołącz do Pokoju</span>
-                            <span class="btn-icon">⚡</span>
-                        </button>
+                        <div class="divider">
+                            <span>lub dołącz kodem</span>
+                        </div>
+                        
+                        <!-- Join Game Area -->
+                        <div class="action-section">
+                            <div class="code-input-wrapper">
+                                <input type="text" id="input-room-code" maxlength="6" placeholder="WPISZ KOD..." autocomplete="off" spellcheck="false">
+                            </div>
+                            <button id="btn-join-room" class="btn btn-secondary ripple">
+                                <span class="btn-text">Dołącz do Pokoju</span>
+                                <span class="btn-icon">⚡</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
                 
-                <!-- Lobby Status Feedback Overlay/Toast (built-in UI element) -->
-                <div id="lobby-toast" class="toast hidden"></div>
-                
-                <!-- Subtle footer info -->
-                <div class="footer-info">
-                    <p>© 2026 Krzyżówki Master. Oparte o Supabase Realtime.</p>
+                <!-- TAB 2: LEVELS VIEW (LEVEL SELECT SELECTOR) -->
+                <div id="lobby-levels-view" class="tab-view hidden">
+                    <div class="glass-card levels-panel">
+                        <h2>Wybierz poziom</h2>
+                        <p class="section-desc">Wybierz planszę od 1 do 50, aby rozpocząć grę solo</p>
+                        <div class="levels-grid" id="levels-grid-container">
+                            <!-- Populated dynamically in app.js -->
+                        </div>
+                    </div>
                 </div>
+                
+                <!-- TAB 3: PROFILE VIEW -->
+                <div id="lobby-profile-view" class="tab-view hidden">
+                    <div class="glass-card profile-panel">
+                        <div class="profile-avatar">👤</div>
+                        <h2>Mistrz Krzyżówek</h2>
+                        <p class="profile-title">Gracz offline / online</p>
+                        <div class="profile-stats">
+                            <div class="stat-card">
+                                <span class="stat-val" id="stat-solved-count">0</span>
+                                <span class="stat-label">Ukończone</span>
+                            </div>
+                            <div class="stat-card">
+                                <span class="stat-val" id="stat-points">0</span>
+                                <span class="stat-label">Suma Punktów</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Lobby Status Feedback Overlay/Toast -->
+                <div id="lobby-toast" class="toast hidden"></div>
             </div>
             
-            <!-- Lobby Waiting Overlay (shows when creating or searching a room) -->
+            <!-- Bottom Navigation Bar (Screenshot pattern) -->
+            <div class="bottom-nav-bar">
+                <button class="nav-item active">
+                    <span class="nav-icon">🏠</span>
+                    <span class="nav-label">Ekran główny</span>
+                </button>
+                <button class="nav-item">
+                    <span class="nav-icon">📅</span>
+                    <span class="nav-label">Łamigłówki</span>
+                </button>
+                <button class="nav-item">
+                    <span class="nav-icon">👤</span>
+                    <span class="nav-label">Ja</span>
+                </button>
+            </div>
+            
+            <!-- Lobby Waiting Overlay -->
             <div id="lobby-waiting-overlay" class="overlay hidden">
                 <div class="overlay-card glass-card">
                     <div class="spinner"></div>
@@ -93,116 +149,107 @@
                     <button id="btn-cancel-waiting" class="btn btn-text">Anuluj</button>
                 </div>
             </div>
-
-            <!-- Supabase Config Modal -->
-            <div id="settings-overlay" class="overlay hidden">
-                <div class="overlay-card glass-card">
-                    <h3>Połączenie z Supabase</h3>
-                    <p class="section-desc">Skonfiguruj połączenie ze swoją bazą Supabase, aby grać online.</p>
-                    
-                    <div class="input-group">
-                        <label for="input-supabase-url">Supabase URL</label>
-                        <input type="text" id="input-supabase-url" placeholder="https://xxxx.supabase.co" autocomplete="off">
-                    </div>
-                    
-                    <div class="input-group">
-                        <label for="input-supabase-key">Anon Key</label>
-                        <input type="password" id="input-supabase-key" placeholder="eyJhbGciOi..." autocomplete="off">
-                    </div>
-                    
-                    <button id="btn-save-settings" class="btn btn-primary ripple">Zapisz Ustawienia</button>
-                    <button id="btn-close-settings" class="btn btn-text">Zamknij</button>
-                </div>
-            </div>
         </section>
         
-        <!-- ================= GAME SCREEN ================= -->
+        <!-- ================= GAME PLAY SCREEN ================= -->
         <section id="screen-game" class="screen">
-            <!-- Game Header -->
-            <header class="game-header glass-card">
-                <button id="btn-leave-game" class="btn-icon-only" aria-label="Wyjdź z gry">
-                    <svg viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+            
+            <!-- Header Section (Screenshot pattern: Back on left, Gear on right) -->
+            <header class="game-header">
+                <button id="btn-leave-game" class="btn-icon-only" aria-label="Wróć do lobby">
+                    <svg viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
                 </button>
                 
-                <div class="header-center">
-                    <div class="room-code-badge">
-                        Pokój: <span id="game-room-code">------</span>
-                    </div>
-                </div>
+                <h1 class="game-title" id="game-title-label">Łamigłówka 1</h1>
                 
-                <div class="header-right">
-                    <div class="game-timer">00:00</div>
-                </div>
+                <button id="btn-game-settings" class="btn-icon-only" aria-label="Ustawienia gry">
+                    <svg viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/></svg>
+                </button>
             </header>
             
-            <!-- Multiplayer Scoreboard -->
-            <div class="scoreboard glass-card">
-                <!-- Player 1 (You) -->
-                <div class="player-score player-local active" id="player-local-info">
-                    <div class="player-avatar">👤</div>
-                    <div class="player-meta">
-                        <span class="player-name">Ty</span>
-                        <span class="player-points" id="score-local">0 pkt</span>
-                    </div>
+            <!-- Real-time Versus Scoreboard (Screenshot pattern) -->
+            <div class="scoreboard">
+                <div class="player-score" id="player-local-info">
+                    <span class="player-name">Ty</span>
+                    <span class="score-box-blue" id="score-local">0</span>
                 </div>
-                
-                <div class="score-vs">VS</div>
-                
-                <!-- Player 2 (Opponent) -->
-                <div class="player-score player-remote" id="player-remote-info">
-                    <div class="player-avatar">👽</div>
-                    <div class="player-meta">
-                        <span class="player-name" id="opponent-name">Oczekiwanie...</span>
-                        <span class="player-points" id="score-remote">0 pkt</span>
-                    </div>
+                <div class="score-vs">vs</div>
+                <div class="player-score player-waiting" id="player-remote-info">
+                    <span class="score-box-grey" id="score-remote">2</span>
+                    <span class="player-name" id="opponent-name">Przeciwnik</span>
                 </div>
             </div>
             
-            <!-- Active Clue Bar -->
-            <div class="clue-bar glass-card" id="clue-bar">
-                <div class="clue-number" id="active-clue-number">--</div>
-                <div class="clue-text" id="active-clue-text">Dotknij litery na planszy, aby zobaczyć pytanie.</div>
+            <!-- Game Workspace: Viewport and Board Container -->
+            <div id="board-viewport" class="board-viewport">
+                <div id="board-container" class="board-container">
+                    <!-- Grid cells populated dynamically by app.js -->
+                </div>
             </div>
             
-            <!-- Crossword Board Viewport (Allows panning and zooming) -->
-            <main class="board-viewport" id="board-viewport">
-                <!-- The container that holds the crossword cells and handles transform translates -->
-                <div class="board-container" id="board-container">
-                    <!-- Dynamic grid cells will be rendered here by JS -->
-                </div>
-            </main>
-            
-            <!-- Game Toast Notification -->
-            <div id="game-toast" class="toast hidden"></div>
-            
-            <!-- Bottom Letter Pool Sheet -->
-            <footer class="bottom-sheet glass-card" id="letter-pool-sheet">
-                <div class="sheet-handle"></div>
-                <div class="sheet-title">Twoja Pula Liter</div>
+            <!-- Bottom Panel Container (Screenshot pattern) -->
+            <div class="bottom-sheet">
+                <!-- Floating Toast Alert inside gameplay -->
+                <div id="game-toast" class="toast hidden"></div>
                 
-                <!-- The scrollable list of letters -->
+                <!-- Wooden Scrabble Letter Pool tray -->
                 <div class="letter-pool-wrapper">
-                    <div class="letter-pool" id="letter-pool">
-                        <!-- Dynamic letters will be rendered here by JS -->
+                    <div id="letter-pool" class="letter-pool">
+                        <!-- Draggable tiles added dynamically by app.js -->
                     </div>
                 </div>
-            </footer>
+                
+                <!-- Action controls (Exchange, Skip, Word, Hint) -->
+                <div class="action-buttons-row">
+                    <button class="btn-action" id="btn-exchange-letters">
+                        <div class="btn-action-circle">🔄</div>
+                        <span class="btn-action-label">Wymień</span>
+                    </button>
+                    
+                    <button class="btn-action-pill" id="btn-skip-turn">Pomiń</button>
+                    
+                    <button class="btn-action" id="btn-reveal-word">
+                        <div class="btn-action-circle">
+                            🔑
+                            <span class="badge">1</span>
+                        </div>
+                        <span class="btn-action-label">Słowo</span>
+                    </button>
+                    
+                    <button class="btn-action" id="btn-reveal-hint">
+                        <div class="btn-action-circle">
+                            💡
+                            <span class="badge">1</span>
+                        </div>
+                        <span class="btn-action-label">Wskazówka</span>
+                    </button>
+                </div>
+                
+                <!-- Mock Ad Banner (Screenshot pattern) -->
+                <div class="mock-ad-banner">
+                    <div class="ad-left">
+                        <span class="ad-tag">Bilety od</span>
+                        <span class="ad-price">9,99 zł</span>
+                    </div>
+                    <div class="ad-right">
+                        <span class="ad-brand-logo">🚌 FLIXBUS</span>
+                    </div>
+                </div>
+            </div>
             
-            <!-- Waiting for Opponent Screen Overlay -->
+            <!-- Game Room pairing details overlay -->
             <div id="game-waiting-overlay" class="overlay">
                 <div class="overlay-card glass-card text-center">
-                    <div class="pulse-animation">📡</div>
-                    <h3>Oczekiwanie na rywala...</h3>
-                    <p>Udostępnij kod pokoju swojemu znajomemu, aby rozpocząć grę:</p>
+                    <h3>Oczekiwanie na rywala</h3>
+                    <p class="small-desc">Udostępnij kod poniżej przeciwnikowi, aby rozpocząć grę:</p>
                     <div class="share-code-box" id="share-code-box">------</div>
-                    <button id="btn-copy-code" class="btn btn-secondary btn-sm ripple">Kopiuj Kod</button>
-                    <div class="overlay-actions">
-                        <button id="btn-cancel-game" class="btn btn-text">Anuluj pokój</button>
-                    </div>
+                    <button id="btn-copy-code" class="btn btn-secondary btn-sm">Skopiuj kod 📋</button>
+                    <div class="divider">lub</div>
+                    <button id="btn-cancel-game" class="btn btn-text">Anuluj pokój</button>
                 </div>
             </div>
             
-            <!-- Victory / End Game Screen Overlay (For Stage 7, outlined here) -->
+            <!-- Victory / End Game Screen Overlay -->
             <div id="game-end-overlay" class="overlay hidden">
                 <div class="overlay-card glass-card text-center">
                     <h2 id="end-title">Koniec Gry!</h2>
@@ -225,15 +272,38 @@
             </div>
         </section>
         
+        <!-- ================= SETTINGS OVERLAY ================= -->
+        <section id="settings-overlay" class="overlay hidden">
+            <div class="overlay-card glass-card">
+                <h2>Konfiguracja Supabase</h2>
+                <p class="overlay-desc">Wpisz dane API ze swojego panelu Supabase, aby gra działała online.</p>
+                
+                <div class="input-group">
+                    <label for="input-supabase-url">Supabase URL</label>
+                    <input type="url" id="input-supabase-url" placeholder="https://xyz.supabase.co" autocomplete="off">
+                </div>
+                
+                <div class="input-group">
+                    <label for="input-supabase-key">Anon Key</label>
+                    <input type="text" id="input-supabase-key" placeholder="Klucz API..." autocomplete="off">
+                </div>
+                
+                <div class="overlay-actions">
+                    <button id="btn-save-settings" class="btn btn-primary">Zapisz Ustawienia</button>
+                    <button id="btn-close-settings" class="btn btn-text">Zamknij</button>
+                </div>
+            </div>
+        </section>
+        
     </div>
     
     <!-- Supabase Client Library CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <!-- Supabase Integration -->
-    <script src="supabase.js"></script>
+    <script src="supabase.js?v=3.0"></script>
     
     <!-- Application Logic -->
-    <script src="app.js"></script>
+    <script src="app.js?v=3.0"></script>
 </body>
 </html>
