@@ -1,0 +1,1038 @@
+/* style.css - Premium Mobile-First Crossword Stylesheet */
+
+/* ==========================================================================
+   1. VARIABLES & DESIGN SYSTEM
+   ========================================================================== */
+:root {
+    /* Color Palette */
+    --bg-main: #0c0612;
+    --bg-gradient: radial-gradient(circle at 50% 20%, #220f38 0%, #0a040e 100%);
+    --color-primary: #8a3ffc; /* Electric Purple */
+    --color-primary-light: #a76dfd;
+    --color-accent: #ff007f; /* Neon Magenta */
+    --color-accent-blue: #00f0ff; /* Neon Cyan */
+    --color-success: #00e676; /* Vivid Green */
+    --color-warning: #ffb300; /* Golden Amber */
+    
+    /* Text Colors */
+    --text-white: #ffffff;
+    --text-muted: #b39cce;
+    --text-dark: #120a1c;
+    
+    /* Glassmorphism Styles */
+    --glass-bg: rgba(255, 255, 255, 0.03);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+    
+    /* Grid & Cell Styles */
+    --cell-size: 46px;
+    --cell-gap: 5px;
+    --cell-bg: #ffffff;
+    --cell-text: #1a0b2e;
+    
+    /* Board Styling */
+    --board-bg: transparent;
+    
+    /* Typography */
+    --font-family: 'Outfit', sans-serif;
+    
+    /* Safe Area Insets (for iPhones with notch) */
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* ==========================================================================
+   2. CORE RESETS & UTILITIES
+   ========================================================================== */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    height: 100dvh; /* Dynamic viewport height for mobile browsers */
+    overflow: hidden;
+    font-family: var(--font-family);
+    background: var(--bg-main);
+    color: var(--text-white);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overscroll-behavior: none; /* Prevent pull-to-refresh on mobile */
+    user-select: none; /* Disable text selection for game interactions */
+    -webkit-user-select: none;
+}
+
+#app {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    background: var(--bg-gradient);
+}
+
+.screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    flex-direction: column;
+    padding-top: var(--safe-top);
+    padding-bottom: var(--safe-bottom);
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.screen.active {
+    display: flex;
+    opacity: 1;
+}
+
+/* Glassmorphism Cards */
+.glass-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    box-shadow: var(--glass-shadow);
+}
+
+/* Buttons */
+.btn {
+    font-family: var(--font-family);
+    font-size: 16px;
+    font-weight: 600;
+    padding: 14px 24px;
+    border-radius: 14px;
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    width: 100%;
+    outline: none;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--color-primary) 0%, #6e1afb 100%);
+    color: var(--text-white);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.btn-primary:active {
+    transform: scale(0.96);
+    background: #6e1afb;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text-white);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.btn-secondary:active {
+    transform: scale(0.96);
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.btn-text {
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 14px;
+    padding: 8px 16px;
+    box-shadow: none;
+}
+
+.btn-text:active {
+    color: var(--text-white);
+}
+
+.btn-sm {
+    padding: 8px 16px;
+    font-size: 14px;
+    border-radius: 10px;
+}
+
+.btn-icon-only {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid var(--glass-border);
+    color: var(--text-white);
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-icon-only:active {
+    transform: scale(0.92);
+    background: rgba(255, 255, 255, 0.15);
+}
+
+/* Divider */
+.divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: 20px 0;
+    color: var(--text-muted);
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.divider::before, .divider::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.divider:not(:empty)::before {
+    margin-right: 15px;
+}
+
+.divider:not(:empty)::after {
+    margin-left: 15px;
+}
+
+/* ==========================================================================
+   3. LOBBY SCREEN STYLING
+   ========================================================================== */
+#screen-lobby {
+    justify-content: center;
+    align-items: center;
+    padding: 24px;
+}
+
+.lobby-content {
+    width: 100%;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Brand Header */
+.logo-area {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+}
+
+.logo-badge {
+    display: flex;
+    gap: 6px;
+}
+
+.logo-letter {
+    width: 44px;
+    height: 44px;
+    background: var(--cell-bg);
+    color: var(--cell-text);
+    font-size: 24px;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(138, 63, 252, 0.4);
+    transform: rotate(-3deg);
+}
+
+.logo-letter-2 {
+    transform: rotate(4deg) translateY(-4px);
+    background: var(--color-primary);
+    color: var(--text-white);
+}
+
+.logo-letter-3 {
+    transform: rotate(-2deg);
+}
+
+.logo-area h1 {
+    font-size: 32px;
+    font-weight: 900;
+    letter-spacing: -0.5px;
+}
+
+.accent-text {
+    background: linear-gradient(135deg, var(--color-primary-light) 0%, var(--color-accent) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.subtitle {
+    font-size: 14px;
+    color: var(--text-muted);
+}
+
+/* Actions Panel */
+.actions-panel {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+}
+
+.action-section {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.action-section h2 {
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: -0.2px;
+}
+
+.section-desc {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.4;
+}
+
+/* Code Input */
+.code-input-wrapper {
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#input-room-code {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text-white);
+    font-size: 24px;
+    font-weight: 800;
+    text-align: center;
+    letter-spacing: 6px;
+    width: 100%;
+    padding: 8px;
+    text-transform: uppercase;
+}
+
+#input-room-code::placeholder {
+    color: rgba(255, 255, 255, 0.15);
+    letter-spacing: 0px;
+}
+
+/* Footer Info */
+.footer-info {
+    text-align: center;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.3);
+}
+
+/* ==========================================================================
+   4. GAME SCREEN STYLING
+   ========================================================================== */
+#screen-game {
+    display: none;
+    justify-content: space-between;
+    height: 100%;
+}
+
+#screen-game.active {
+    display: flex;
+}
+
+/* Game Header */
+.game-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    margin: 8px 12px;
+    border-radius: 16px;
+    z-index: 10;
+}
+
+.room-code-badge {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+.room-code-badge span {
+    color: var(--color-accent-blue);
+    font-weight: 800;
+    letter-spacing: 0.5px;
+}
+
+.game-timer {
+    font-size: 16px;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 6px 12px;
+    border-radius: 20px;
+    color: var(--color-warning);
+}
+
+/* Scoreboard */
+.scoreboard {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    margin: 0 12px 8px 12px;
+    border-radius: 16px;
+    z-index: 10;
+}
+
+.player-score {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 10px;
+    border-radius: 12px;
+    border: 1px solid transparent;
+    transition: all 0.3s ease;
+    flex: 1;
+}
+
+.player-score.active {
+    background: rgba(138, 63, 252, 0.1);
+    border-color: rgba(138, 63, 252, 0.2);
+}
+
+.player-local.active {
+    box-shadow: 0 0 15px rgba(138, 63, 252, 0.15);
+}
+
+.player-remote.active {
+    background: rgba(255, 0, 127, 0.06);
+    border-color: rgba(255, 0, 127, 0.15);
+    box-shadow: 0 0 15px rgba(255, 0, 127, 0.1);
+}
+
+.player-avatar {
+    font-size: 20px;
+    background: rgba(255, 255, 255, 0.05);
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.player-meta {
+    display: flex;
+    flex-direction: column;
+}
+
+.player-name {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-muted);
+}
+
+.player-score.active .player-name {
+    color: var(--text-white);
+    font-weight: 600;
+}
+
+.player-points {
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--text-white);
+}
+
+.player-remote .player-points {
+    color: var(--text-white);
+}
+
+.score-vs {
+    font-size: 11px;
+    font-weight: 900;
+    color: rgba(255, 255, 255, 0.25);
+    margin: 0 12px;
+}
+
+/* Active Clue Bar */
+.clue-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    margin: 0 12px 8px 12px;
+    border-radius: 16px;
+    z-index: 10;
+    min-height: 52px;
+}
+
+.clue-number {
+    background: var(--color-primary);
+    color: var(--text-white);
+    font-size: 14px;
+    font-weight: 800;
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.clue-text {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-white);
+    line-height: 1.4;
+}
+
+/* ==========================================================================
+   5. CROSSWORD BOARD (FLOATING TILES)
+   ========================================================================== */
+.board-viewport {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 150px; /* Space for the bottom sheet */
+    z-index: 2;
+    touch-action: none; /* Block browser default gestures like double-tap/pinch zoom */
+}
+
+.board-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: grid;
+    will-change: transform;
+    transform-origin: 0 0;
+    background: var(--board-bg);
+    padding: 100px; /* Extra padding around the board to allow free panning */
+}
+
+/* Floating Crossword Cell */
+.board-cell {
+    width: var(--cell-size);
+    height: var(--cell-size);
+    background: transparent;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+}
+
+.board-cell.filled-slot {
+    /* Valid square where a letter goes */
+    background: var(--cell-bg);
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25), 
+                inset 0 -3px 0 rgba(0, 0, 0, 0.08);
+    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border: 1px solid rgba(255, 255, 255, 0.9);
+}
+
+/* Small clue indicator number inside the cell */
+.board-cell-number {
+    position: absolute;
+    top: 3px;
+    left: 4px;
+    font-size: 9px;
+    font-weight: 800;
+    color: rgba(26, 11, 46, 0.45);
+    z-index: 1;
+}
+
+/* Letter inside the board slot */
+.board-cell-letter {
+    font-size: 22px;
+    font-weight: 900;
+    color: var(--cell-text);
+    line-height: 1;
+    pointer-events: none;
+    transform: translateY(-1px);
+}
+
+/* Active Highlight States */
+.board-cell.selected-cell {
+    background: #e8e2ff;
+    border: 2px solid var(--color-primary);
+    box-shadow: 0 0 12px rgba(138, 63, 252, 0.35);
+}
+
+.board-cell.highlighted-word {
+    background: #f3f0ff;
+}
+
+/* Placement Success Animation */
+@keyframes popIn {
+    0% { transform: scale(0.85); filter: brightness(1.3); }
+    50% { transform: scale(1.12); filter: brightness(1.5); }
+    100% { transform: scale(1); filter: brightness(1); }
+}
+
+.board-cell.placed-correctly {
+    animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    background: #e1ffed;
+    border-color: var(--color-success);
+}
+
+.board-cell.placed-correctly .board-cell-letter {
+    color: #007e33;
+}
+
+/* ==========================================================================
+   6. BOTTOM SHEET (LETTER POOL)
+   ========================================================================== */
+.bottom-sheet {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    border-radius: 24px 24px 0 0;
+    padding: 12px 0 calc(12px + var(--safe-bottom)) 0;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.5);
+    border-bottom: none;
+}
+
+.sheet-handle {
+    width: 36px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 2px;
+    align-self: center;
+    margin-bottom: 4px;
+}
+
+.sheet-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 0 20px;
+    text-align: center;
+}
+
+.letter-pool-wrapper {
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 8px 16px 12px 16px;
+    width: 100%;
+    -webkit-overflow-scrolling: touch; /* Smooth inertia scrolling for iOS */
+}
+
+/* Custom Scrollbar for letter pool */
+.letter-pool-wrapper::-webkit-scrollbar {
+    height: 4px;
+}
+.letter-pool-wrapper::-webkit-scrollbar-track {
+    background: transparent;
+}
+.letter-pool-wrapper::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+}
+
+.letter-pool {
+    display: flex;
+    gap: 10px;
+    width: max-content;
+}
+
+/* Draggable Tile */
+.letter-tile {
+    width: 50px;
+    height: 50px;
+    background: var(--cell-bg);
+    color: var(--cell-text);
+    font-size: 24px;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3),
+                inset 0 -3px 0 rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    cursor: grab;
+    transition: transform 0.1s ease, opacity 0.15s ease;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: none; /* Crucial for custom Drag & Drop Touch logic */
+}
+
+.letter-tile:active {
+    cursor: grabbing;
+}
+
+.letter-tile.dragging {
+    position: fixed;
+    z-index: 1000;
+    transform: scale(1.15);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    pointer-events: none; /* Make touchmove targeting transparent */
+    opacity: 0.9;
+}
+
+.letter-tile.used {
+    opacity: 0.25;
+    pointer-events: none;
+    transform: scale(0.9);
+}
+
+/* ==========================================================================
+   7. OVERLAYS & MODALS
+   ========================================================================== */
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(8, 4, 14, 0.85);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    opacity: 1;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.overlay.hidden {
+    display: none !important;
+    opacity: 0;
+}
+
+.overlay-card {
+    width: 100%;
+    max-width: 360px;
+    padding: 32px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    animation: zoomIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.text-center {
+    text-align: center;
+}
+
+/* Share Box */
+.share-code-box {
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px dashed rgba(255, 255, 255, 0.15);
+    padding: 16px;
+    border-radius: 16px;
+    font-size: 28px;
+    font-weight: 900;
+    color: var(--color-accent-blue);
+    letter-spacing: 4px;
+    margin: 8px 0;
+    text-align: center;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.share-code-box:active {
+    background: rgba(255, 255, 255, 0.09);
+}
+
+.overlay-actions {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+}
+
+/* Victory Scoreboard */
+.end-scoreboard {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 16px;
+    padding: 16px;
+    margin: 10px 0;
+}
+
+.end-score-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 16px;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.end-score-row:last-child {
+    border-bottom: none;
+}
+
+.end-player {
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+.end-score {
+    font-weight: 800;
+    color: var(--text-white);
+}
+
+#end-local-row .end-player {
+    color: var(--color-primary-light);
+}
+
+#end-remote-row .end-player {
+    color: var(--color-accent);
+}
+
+/* ==========================================================================
+   8. TOAST NOTIFICATIONS
+   ========================================================================== */
+.toast {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(0);
+    background: rgba(26, 11, 46, 0.95);
+    border: 1px solid var(--color-primary);
+    padding: 12px 24px;
+    border-radius: 14px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-white);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    z-index: 2000;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    text-align: center;
+    white-space: nowrap;
+}
+
+.toast.hidden {
+    opacity: 0;
+    transform: translateX(-50%) translateY(20px);
+    pointer-events: none;
+}
+
+/* ==========================================================================
+   9. ANIMATIONS & LOADER
+   ========================================================================== */
+.spinner {
+    width: 44px;
+    height: 44px;
+    border: 4px solid rgba(255, 255, 255, 0.1);
+    border-left-color: var(--color-primary-light);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    align-self: center;
+}
+
+.pulse-animation {
+    font-size: 48px;
+    animation: pulse 2s infinite ease-in-out;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); opacity: 0.8; }
+    50% { transform: scale(1.15); opacity: 1; filter: drop-shadow(0 0 15px var(--color-accent-blue)); }
+    100% { transform: scale(1); opacity: 0.8; }
+}
+
+@keyframes slideUp {
+    from { transform: translateY(40px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes zoomIn {
+    from { transform: scale(0.9); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+/* Ripple Button Effect Helper */
+.ripple {
+    position: relative;
+    overflow: hidden;
+}
+
+/* ==========================================================================
+   10. SETTINGS & FORM INPUTS
+   ========================================================================== */
+.floating-settings {
+    position: absolute;
+    top: calc(16px + var(--safe-top));
+    right: 16px;
+    z-index: 50;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    text-align: left;
+    width: 100%;
+}
+
+.input-group label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.input-group input {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 12px 16px;
+    color: var(--text-white);
+    font-family: var(--font-family);
+    font-size: 15px;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.input-group input:focus {
+    border-color: var(--color-primary-light);
+    box-shadow: 0 0 10px rgba(167, 109, 253, 0.15);
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-6px); }
+    40%, 80% { transform: translateX(6px); }
+}
+
+/* ==========================================================================
+   11. RESPONSIVE OPTIMIZATIONS FOR NARROW SCREENS (STAGE 7)
+   ========================================================================== */
+@media (max-width: 360px) {
+    /* Compress Lobby */
+    .lobby-content {
+        gap: 20px;
+    }
+    .logo-area h1 {
+        font-size: 26px;
+    }
+    .logo-letter {
+        width: 38px;
+        height: 38px;
+        font-size: 20px;
+    }
+    .actions-panel {
+        padding: 16px;
+    }
+    .btn {
+        padding: 12px 18px;
+        font-size: 15px;
+    }
+
+    /* Compress Game Screen Elements */
+    .game-header {
+        padding: 8px 12px;
+        margin: 4px 8px;
+        border-radius: 12px;
+    }
+    .room-code-badge {
+        padding: 4px 10px;
+        font-size: 12px;
+    }
+    .game-timer {
+        padding: 4px 10px;
+        font-size: 14px;
+    }
+    
+    /* Scoreboard */
+    .scoreboard {
+        padding: 8px 12px;
+        margin: 0 8px 6px 8px;
+        border-radius: 12px;
+    }
+    .player-score {
+        padding: 4px 8px;
+        gap: 8px;
+    }
+    .player-avatar {
+        width: 28px;
+        height: 28px;
+        font-size: 16px;
+        border-radius: 8px;
+    }
+    .player-name {
+        font-size: 11px;
+    }
+    .player-points {
+        font-size: 13px;
+    }
+    .score-vs {
+        margin: 0 4px;
+        font-size: 9px;
+    }
+    
+    /* Clue Bar */
+    .clue-bar {
+        padding: 8px 12px;
+        margin: 0 8px 6px 8px;
+        border-radius: 12px;
+        min-height: 44px;
+    }
+    .clue-number {
+        width: 20px;
+        height: 20px;
+        font-size: 12px;
+        border-radius: 4px;
+    }
+    .clue-text {
+        font-size: 12px;
+    }
+
+    /* Letter pool bottom tray scaling */
+    .letter-tile {
+        width: 44px;
+        height: 44px;
+        font-size: 20px;
+        border-radius: 10px;
+    }
+    .bottom-sheet {
+        padding: 8px 0 calc(8px + var(--safe-bottom)) 0;
+    }
+    .sheet-title {
+        font-size: 11px;
+    }
+    
+    /* Bounding limits adjustment */
+    .board-viewport {
+        margin-bottom: 125px; /* Fits shorter tray */
+    }
+}

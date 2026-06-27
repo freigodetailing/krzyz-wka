@@ -1,0 +1,9 @@
+{
+  "short_name": "Krzyzowka",
+  "name": "Krzyzowki Master Multiplayer",
+  "start_url": "./index.html",
+  "background_color": "#0d0714",
+  "theme_color": "#1e112a",
+  "display": "standalone",
+  "orientation": "portrait"
+}
