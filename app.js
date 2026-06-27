@@ -208,14 +208,14 @@ function resetGameState() {
 // ==========================================================================
 
 function subscribeToRoom(roomCode) {
-    if (!supabaseClient) {
+    if (!window.supabaseClient) {
         showLobbyToast("Błąd: Supabase nie został zainicjalizowany!");
         return;
     }
 
     console.log(`Subscribing to presence channel: room:${roomCode}`);
     
-    roomChannel = supabaseClient.channel(`room:${roomCode}`, {
+    roomChannel = window.supabaseClient.channel(`room:${roomCode}`, {
         config: {
             presence: {
                 key: playerId,
@@ -929,10 +929,6 @@ UI.boardViewport.addEventListener('touchstart', (e) => {
     if (e.touches.length === 1) {
         isPanning = true;
         startX = e.touches[0].clientX - panX;
-        startY = e.touches[0].clientY - ph = panY; // wait, minor typo here in original app.js "ph = panY" instead of "startY = e.touches[0].clientY - panY"!
-        // Actually let's double check if I had a typo in previous app.js:
-        // No, in my previous write I had: `startY = e.touches[0].clientY - panY;`.
-        // Let's write it correctly here:
         startY = e.touches[0].clientY - panY;
     } else if (e.touches.length === 2) {
         isPanning = false;
@@ -982,7 +978,7 @@ function getTouchDistance(touch1, touch2) {
 
 // Create Room Action
 UI.btnCreateRoom.addEventListener('click', async () => {
-    if (!supabaseClient) {
+    if (!window.supabaseClient) {
         showLobbyToast("Błąd: Skonfiguruj Supabase (koło zębate w rogu)!");
         return;
     }
@@ -1016,7 +1012,7 @@ UI.btnCreateRoom.addEventListener('click', async () => {
 
 // Join Room Action
 UI.btnJoinRoom.addEventListener('click', async () => {
-    if (!supabaseClient) {
+    if (!window.supabaseClient) {
         showLobbyToast("Błąd: Skonfiguruj Supabase (koło zębate w rogu)!");
         return;
     }
@@ -1062,7 +1058,7 @@ UI.btnNextLevel.addEventListener('click', async () => {
     
     try {
         // 1. Fetch crosswords levels list
-        const { data: crosswords, error: fetchErr } = await supabaseClient
+        const { data: crosswords, error: fetchErr } = await window.supabaseClient
             .from('crosswords')
             .select('id, level');
             
@@ -1078,7 +1074,7 @@ UI.btnNextLevel.addEventListener('click', async () => {
         }
         
         // 3. Fetch full definition
-        const { data: crosswordFull, error: fetchFullErr } = await supabaseClient
+        const { data: crosswordFull, error: fetchFullErr } = await window.supabaseClient
             .from('crosswords')
             .select('*')
             .eq('id', nextCw.id)
@@ -1087,7 +1083,7 @@ UI.btnNextLevel.addEventListener('click', async () => {
         if (fetchFullErr) throw fetchFullErr;
         
         // 4. Update room details in DB
-        await supabaseClient
+        await window.supabaseClient
             .from('rooms')
             .update({
                 crossword_id: nextCw.id,
